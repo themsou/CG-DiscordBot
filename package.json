@@ -4,7 +4,9 @@
   "description": "Bot discord pour CineGang",
   "main": "index.js",
   "dependencies": {
-    "discord.js": "^11.5.1"
+    "discord.js": "^11.5.1",
+    "hashmap": "^2.4.0",
+    "winston": "^3.2.1"
   },
   "devDependencies": {},
   "scripts": {

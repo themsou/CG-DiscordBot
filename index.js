@@ -1,28 +1,53 @@
-console.log('Bonjour le fichier index.js à bien été lançé !');
-
-// Configure logger settings
-var logger = require('winston');
-logger.remove(logger.transports.Console);
-logger.add(logger.transports.Console, {
-    colorize: true
-});
-logger.level = 'debug';
-// -END
-
-const Discord = require('discord.js');
-const client = new Discord.Client({
-  token: auth.token,
-  autorun: true
-});
 var auth = require('./auth.json');
-
-
+const Discord = require('discord.js');
+const Listener = require('./seriesAdd/listener.js');
+global.client = new Discord.Client();
 
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+  console.log(`Connexion en tant que ${client.user.tag}!`);
+
+  client.user.setActivity("Bienvenue sur ce serveur !");
+
 });
 
 client.on('message', msg => {
+
+  new Listener.onMessage(msg);
+
+});
+client.on('messageReactionAdd', (msgReaction, user) => {
+  new Listener.onMessageReactionAdd(msgReaction.message, msgReaction.emoji, user);
+});
+client.on('messageReactionRemove', (msgReaction, user) => {
+  new Listener.onMessageReactionRemove(msgReaction.message, msgReaction.emoji, user);
+});
+
+// EMBED EXAMPLE
+/*const embed = {
+  color: 16746215,
+  author: {
+    name: "msg.author.username",
+    icon_url: "msg.author.avatarURL"
+  },
+  title: "Test Embed",
+  url: "https://google.com",
+  description: "Description",
+  fields: [{
+    name: "Catégorie",
+    value: "contenu"
+  },
+  {
+    name: "Catégorie",
+    value: "contenu"
+  }],
+  timestamp: new Date(),
+  footer: {
+    value: "msg.author.username",
+    icon_url: "msg.author.avatarURL"
+  }
+}
+*/
+/*client.on('message', msg => {
   if(msg.content === 'ping'){
 
     msg.reply('Pong!');
@@ -46,4 +71,6 @@ client.on('message', msg => {
     		msg.reply('Hello !');
     	});
   }
-});
+});*/
+
+client.login(auth.token);
