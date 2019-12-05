@@ -1,4 +1,4 @@
-const UserAdder = require('./userAdder.js');
+const UserAdder = require('./addSerieAsk.js');
 const HashMap = require('hashmap');
 
 const CHANNEL_ID = "615888027339980800";
@@ -60,7 +60,7 @@ var onMessage = function onMessage(msg){
       }
     }else if(args[0] === '/debug'){
 
-      var content = 'Liste de toute les instances en cours de userAdder (Procédure d\'ajout de série)\n';
+      var content = 'Liste de toute les instances en cours de addSerieAsk (Procédure d\'ajout de série)\n';
       for(const entry of users.entries()){
         content += entry[0] + ' : sName=' + entry[1].sName + ' | status=' + entry[1].status + ' | sType=' + entry[1].sType + ' | sTime=' + entry[1].sTime + '\n';
       }
@@ -85,7 +85,7 @@ var onMessageReactionAdd = function onMessageReactionAdd(msg, emoji, user){
     }
   }else if(msg.channel.id == VOTE_CHANNEL_ID){
 
-    var seriesToAdd = require('./seriesToAdd.json');
+    var seriesToAdd = require('./seriesToVote.json');
 
 
     if(user.bot){

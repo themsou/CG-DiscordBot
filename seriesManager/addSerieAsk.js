@@ -531,7 +531,7 @@ module.exports = class UserAdder {
   }
   save(){
 
-    const Saver = require('./saver.js');
+    const Saver = require('./addSerieSaver.js');
     new Saver.sendAndSaveUserAdderData(this);
 
 

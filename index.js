@@ -1,6 +1,6 @@
 var auth = require('./auth.json');
 const Discord = require('discord.js');
-const Listener = require('./seriesAdd/listener.js');
+const Listener = require('./seriesManager/listener.js');
 const Counters = require('./counters.js');
 global.client = new Discord.Client();
 
@@ -24,6 +24,21 @@ client.on('presenceUpdate', (oldMember, newMember) => {
 
 client.on('message', msg => {
   new Listener.onMessage(msg);
+
+  var emojis = ['🎁', '🥳', '🤟', '👋', '🙌', '👏', '🎉']
+
+  if(msg.channel.id === '651884727141138462'){ // #Présentations
+    var r = Math.floor(Math.random() * Math.floor(7));
+    msg.react(emojis[r]);
+    if(Math.floor(Math.random() * Math.floor(5)) === 0){
+      var r = Math.floor(Math.random() * Math.floor(7));
+      msg.react(emojis[r]);
+    }
+
+  }else if(msg.channel.id === '593313570909847592'){ // #Idées
+    react(msg, ['👍', '👎'], 0);
+  }
+
 });
 client.on('messageReactionAdd', (msgReaction, user) => {
   new Listener.onMessageReactionAdd(msgReaction.message, msgReaction.emoji, user);
@@ -48,5 +63,12 @@ client.on('raw', packet => {
     }
   });
 });
+function react(msg, emojis, index){
+  if(emojis.length > index+1){
+    msg.react(emojis[index]).then(() => react(msg, emojis, index+1));
+  }else{
+    msg.react(emojis[index]);
+  }
+}
 
 client.login(auth.token);

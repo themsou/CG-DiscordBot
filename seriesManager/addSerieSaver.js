@@ -1,8 +1,8 @@
 const EditJsonFile = require("edit-json-file");
 
-var saveUserAdderData = function saveUserAdderData(userAdder, id){
+var saveData = function saveData(userAdder, id){
 
-  let file = EditJsonFile('./seriesAdd/seriesToAdd.json');
+  let file = EditJsonFile('./seriesManager/seriesToVote.json');
 
   //var path = userAdder.sName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '.' + userAdder.user.tag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   var path = id;
@@ -27,7 +27,7 @@ var saveUserAdderData = function saveUserAdderData(userAdder, id){
   file.save();
 
 }
-var sendAndSaveUserAdderData = function sendAndSaveUserAdderData(userAdder){
+var sendAndSaveData = function sendAndSaveData(userAdder){
 
   var types = '';
   for(const type of userAdder.sTypes){
@@ -86,6 +86,6 @@ function react(msg, emojis, index){
 }
 
 module.exports = {
-    saveUserAdderData: saveUserAdderData,
-    sendAndSaveUserAdderData: sendAndSaveUserAdderData,
+    saveData: saveData,
+    sendAndSaveData: sendAndSaveData,
 }
