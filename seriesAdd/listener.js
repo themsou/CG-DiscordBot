@@ -1,7 +1,8 @@
 const UserAdder = require('./userAdder.js');
 const HashMap = require('hashmap');
 
-const CHANNEL_ID = "590544048922820621";
+const CHANNEL_ID = "615888027339980800";
+const VOTE_CHANNEL_ID = "650735233276313630";
 const SERIES_TYPES = new HashMap(
   'Action', '👊🏻',
   'Ados', '🙆‍♀️',
@@ -32,8 +33,13 @@ var onMessage = function onMessage(msg){
         args.shift();
         var name = args.join(' ');
 
-        users.set(msg.author.tag, new UserAdder(users, name, msg));
-
+        if(users.get(msg.author.tag) == null){
+          var userAdder = new UserAdder(users, msg.author, msg.channel, name);
+          users.set(msg.author.tag, userAdder);
+          userAdder.sendTypeMessage();
+        }else{
+          msg.reply('une procédure d\'ajout de série est déjà en cours, vous devez l\'annuler');
+        }
       }
     }else if(args[0].replace(EMOJI_REGEX, 'a18862256') === 'a18862256'){
       if(args.length >= 2){
@@ -59,6 +65,11 @@ var onMessage = function onMessage(msg){
         content += entry[0] + ' : sName=' + entry[1].sName + ' | status=' + entry[1].status + ' | sType=' + entry[1].sType + ' | sTime=' + entry[1].sTime + '\n';
       }
       msg.channel.send(content);
+    }else{
+      var userAdder = users.get(msg.author.tag);
+      if(userAdder != null){
+        userAdder.userSendOtherMessage(msg);
+      }
     }
   }
 }
@@ -72,6 +83,51 @@ var onMessageReactionAdd = function onMessageReactionAdd(msg, emoji, user){
         userAdder.userAddReact(emoji);
       }
     }
+  }else if(msg.channel.id == VOTE_CHANNEL_ID){
+
+    var seriesToAdd = require('./seriesToAdd.json');
+
+
+    if(user.bot){
+      return;
+    }
+
+    if(seriesToAdd[msg.id] != null){
+      if(emoji.name === '👍'){
+
+      }else if(emoji.name === '👎'){
+
+      }else if(emoji.name === '⚒️'){
+
+        if(users.get(user.tag) == null){
+
+          var userAdder = new UserAdder(users, user, client.channels.get(CHANNEL_ID), seriesToAdd[msg.id]['name']);
+          users.set(user.tag, userAdder);
+          userAdder.sTime = seriesToAdd[msg.id]['epTime'];
+          userAdder.sTypes = seriesToAdd[msg.id]['type'];
+          userAdder.sEp = seriesToAdd[msg.id]['epNumber'];
+          userAdder.sSeasons = seriesToAdd[msg.id]['seasonsNumber'];
+          userAdder.sDesc = seriesToAdd[msg.id]['description'];
+
+          var i = 0;
+          for(var type of seriesToAdd[msg.id]['type']){
+            userAdder.seriesTypes.set(type, seriesToAdd[msg.id]['typeEmojis'][i]);
+            i++;
+          }
+
+          userAdder.sendTypeMessage();
+
+        }else{
+          client.channels.get(CHANNEL_ID).send('<@' + user.id + '>, une procédure d\'ajout de série est déjà en cours, vous devez l\'annuler');
+        }
+
+      }else if(emoji.name === '❌'){
+
+      }else if(emoji.name === '✅'){
+
+      }
+    }
+
   }
 }
 var onMessageReactionRemove = function onMessageReactionRemove(msg, emoji, user){

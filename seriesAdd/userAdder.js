@@ -3,16 +3,18 @@ const HashMap = require('hashmap');
 
 module.exports = class UserAdder {
 
-  constructor(users, sName, msg){
+  constructor(users, user, channel, sName){
     this.users = users;
+    this.user = user;
+    this.channel = channel;
+
     this.sName = sName;
-    this.lastMsg = msg;
     this.sTypes = [];
     this.sTime = 40;
     this.sSeasons = 1;
     this.sEp = 0;
+    this.sDesc = '';
     this.status = 0;
-    this.user = msg.author;
 
     this.seriesTypes = new HashMap(
       'Action', '👊🏻',
@@ -30,7 +32,6 @@ module.exports = class UserAdder {
       'SF et fantastique', '👽',
       'Stand up et talk shows', '🗣️');
 
-    this.sendTypeMessage();
   }
 
   getTypeEmbed(){
@@ -49,7 +50,7 @@ module.exports = class UserAdder {
         name: this.user.tag + " | Ajouter une série",
         icon_url: this.user.avatarURL
       },
-      title: "Vous devez tout d\'abord définir le type de la série",
+      title: "Vous devez tout d\'abord définir le type de la série (1/5)",
       fields: [
         {
           name: 'Nom de la série',
@@ -76,7 +77,7 @@ module.exports = class UserAdder {
   sendTypeMessage(){
 
     var embed = this.getTypeEmbed();
-    this.lastMsg.channel.send({embed}).then(msg => {
+    this.channel.send({embed}).then(msg => {
       this.currentMsg = msg;
       var emojis = this.seriesTypes.values();
       emojis[emojis.length] = '❌';
@@ -89,7 +90,7 @@ module.exports = class UserAdder {
       collector.on('collect', reaction => {
 
         if(reaction.emoji.name === '❌'){
-          this.lastMsg.reply('La procédure a bien été annulée.');
+          this.channel.send('<@' + this.user.id + '>, La procédure a bien été annulée.');
           this.currentMsg.delete();
           this.users.delete(this.user.tag);
         }else if(reaction.emoji.name === '⏭️'){
@@ -102,7 +103,7 @@ module.exports = class UserAdder {
 
       collector.on('end', reactions => {
         if(reactions.get('❌') == null && reactions.get('⏭️') == null){
-          this.lastMsg.reply('Vous deviez réagir au message préçédent (1), la procédure est annulée.');
+          this.channel.send('<@' + this.user.id + '>, Vous deviez réagir au message préçédent (1), la procédure est annulée.');
           this.currentMsg.delete();
           this.users.delete(this.user.tag);
         }
@@ -125,8 +126,8 @@ module.exports = class UserAdder {
     const embed = {
       color: 16746215,
       author: {
-        name: this.lastMsg.author.tag + " | Ajouter une série",
-        icon_url: this.lastMsg.author.avatarURL
+        name: this.user.tag + " | Ajouter une série (2/5)",
+        icon_url: this.user.avatarURL
       },
       title: "Quel est la durée moyenne d\'un épisode ?",
       fields: [
@@ -156,7 +157,7 @@ module.exports = class UserAdder {
   sendTimeMessage(){
 
     var embed = this.getTimeEmbed();
-    this.lastMsg.channel.send({embed}).then(msg => {
+    this.channel.send({embed}).then(msg => {
       this.currentMsg = msg;
       this.react(msg, ['⏮️', '⏭️'], 0);
 
@@ -176,7 +177,7 @@ module.exports = class UserAdder {
       });
       collector.on('end', reactions => {
         if(reactions.get('⏮️') == null && reactions.get('⏭️') == null){
-          this.lastMsg.reply('Vous deviez réagir au message préçédent (2), la procédure est annulée.');
+          this.channel.send('<@' + this.user.id + '>, Vous deviez réagir au message préçédent (2), la procédure est annulée.');
           this.currentMsg.delete();
           this.users.delete(this.user.tag);
         }
@@ -199,8 +200,8 @@ module.exports = class UserAdder {
     const embed = {
       color: 16746215,
       author: {
-        name: this.lastMsg.author.tag + " | Ajouter une série",
-        icon_url: this.lastMsg.author.avatarURL
+        name: this.user.tag + " | Ajouter une série (3/5)",
+        icon_url: this.user.avatarURL
       },
       title: "Combien de saisons comporte la série ?",
       fields: [
@@ -234,7 +235,7 @@ module.exports = class UserAdder {
   sendSeasonsMessage(){
 
     var embed = this.getSeasonsEmbed();
-    this.lastMsg.channel.send({embed}).then(msg => {
+    this.channel.send({embed}).then(msg => {
       this.currentMsg = msg;
       this.react(msg, ['⏮️', '⏭️'], 0);
 
@@ -254,7 +255,7 @@ module.exports = class UserAdder {
       });
       collector.on('end', reactions => {
         if(reactions.get('⏮️') == null && reactions.get('⏭️') == null){
-          this.lastMsg.reply('Vous deviez réagir au message préçédent (3), la procédure est annulée.');
+          this.channel.send('<@' + this.user.id + '>, Vous deviez réagir au message préçédent (3), la procédure est annulée.');
           this.currentMsg.delete();
           this.users.delete(this.user.tag);
         }
@@ -277,8 +278,8 @@ module.exports = class UserAdder {
     const embed = {
       color: 16746215,
       author: {
-        name: this.lastMsg.author.tag + " | Ajouter une série",
-        icon_url: this.lastMsg.author.avatarURL
+        name: this.user.tag + " | Ajouter une série (4/5)",
+        icon_url: this.user.avatarURL
       },
       title: "Combien d'épisodes comporte la série au total ?",
       fields: [
@@ -316,7 +317,7 @@ module.exports = class UserAdder {
   sendEpMessage(){
 
     var embed = this.getEpEmbed();
-    this.lastMsg.channel.send({embed}).then(msg => {
+    this.channel.send({embed}).then(msg => {
       this.currentMsg = msg;
       this.react(msg, ['⏮️', '⏭️'], 0);
 
@@ -331,12 +332,12 @@ module.exports = class UserAdder {
         }else if(reaction.emoji.name === '⏭️'){
           this.status = 4;
           this.currentMsg.delete();
-          //this.sendXXXMessage();
+          this.sendDescMessage();
         }
       });
       collector.on('end', reactions => {
         if(reactions.get('⏮️') == null && reactions.get('⏭️') == null){
-          this.lastMsg.reply('Vous deviez réagir au message préçédent (4), la procédure est annulée.');
+          this.channel.send('<@' + this.user.id + '>, Vous deviez réagir au message préçédent (4), la procédure est annulée.');
           this.currentMsg.delete();
           this.users.delete(this.user.tag);
         }
@@ -349,10 +350,98 @@ module.exports = class UserAdder {
     this.currentMsg.edit({embed});
   }
 
+  getDescEmbed(){
+
+    var types = '';
+    for(const type of this.sTypes){
+      types += '\\' + this.seriesTypes.get(type) + ' ' + type + ', ';
+    }
+
+    const embed = {
+      color: 16746215,
+      author: {
+        name: this.user.tag + " | Ajouter une série (5/5)",
+        icon_url: this.user.avatarURL
+      },
+      title: "Vous devez entrer une Description de la série",
+      fields: [
+        {
+          name: 'Nom de la série',
+          value: this.sName,
+          inline: true
+        },{
+          name: 'Type·s de la série',
+          value: (types === '') ? 'Aucun' : types,
+          inline: true
+        },{
+          name: 'Durée d\'un épisode',
+          value: this.sTime + ' minutes',
+          inline: true
+        },{
+          name: 'Nombre de saisons',
+          value: this.sSeasons + ' saisons',
+          inline: true
+        },{
+          name: 'Nombre d\'épisodes',
+          value: this.sEp + ' épisodes',
+          inline: true
+        },{
+          name: 'Description',
+          value: (this.sDesc === '') ? 'Aucune description définie' : this.sDesc
+        },{
+          name: 'Commandes',
+          value: '⏮️ Précédent\n✅ Terminé \nEnvoyez un message contenant la description de la série'
+        }
+      ],
+      footer: {
+        text: 'Entrez la description avec un message',
+        icon_url: client.user.avatarURL
+      }
+    }
+    return embed;
+  }
+  sendDescMessage(){
+
+    var embed = this.getDescEmbed();
+    this.channel.send({embed}).then(msg => {
+      this.currentMsg = msg;
+      this.react(msg, ['⏮️', '✅'], 0);
+
+      const filter = (reaction, user) => {return (reaction.emoji.name === '⏮️' || reaction.emoji.name === '✅') && user.tag === this.user.tag};
+      const collector = msg.createReactionCollector(filter, {max: 1, time: 60000 * 5, errors: ['time']});
+
+      collector.on('collect', reaction => {
+        if(reaction.emoji.name === '⏮️'){
+          this.status = 3;
+          this.currentMsg.delete();
+          this.sendSeasonsMessage();
+        }else if(reaction.emoji.name === '✅'){
+          this.status = 5;
+          this.currentMsg.delete();
+          this.save();
+        }
+      });
+      collector.on('end', reactions => {
+        if(reactions.get('⏮️') == null && reactions.get('✅') == null){
+          this.channel.send('<@' + this.user.id + '>, Vous deviez réagir au message préçédent (5), la procédure est annulée.');
+          this.currentMsg.delete();
+          this.users.delete(this.user.tag);
+        }
+      });
+    });
+
+  }
+  updateDescMessage(){
+    var embed = this.getDescEmbed();
+    this.currentMsg.edit({embed});
+  }
+
   userSendMessageWithReaction(msg, emoji, other){
-    this.lastMsg = msg;
     if(this.status === 0){
-      if(this.seriesTypes.get(other) == null && this.seriesTypes.search(emoji) == null){
+      if(other.length <= 20){
+        if(this.seriesTypes.get(other) != null) this.seriesTypes.delete(other);
+        if(this.seriesTypes.search(emoji) != null) this.seriesTypes.delete(this.seriesTypes.search(emoji));
+
         if(this.seriesTypes.count() < 20){
           this.seriesTypes.set(other, emoji);
           this.react(this.currentMsg, [emoji], 0)
@@ -362,21 +451,20 @@ module.exports = class UserAdder {
     }
   }
   userSendMessageWithNumber(msg, number){
-    this.lastMsg = msg;
     if(this.status === 1){
       if(number <= 180){
         this.sTime = Math.floor(number / 5) * 5;
         this.updateTimeMessage();
       }else{
-        msg.reply('La durée d\'un épisode ne peut pas dépasser 3h');
+        msg.reply('La durée d\'un épisode ne peut pas dépasser 3h, désolé mais ça n\'existe pas...');
       }
     }else if(this.status === 2){
       if(number <= 50){
         if(number > 0){
-          this.sSeasons = number;
+          this.sSeasons = Math.floor(number);
           this.updateSeasonsMessage();
         }else{
-          msg.reply('Joue pas avec les mots, petit...');
+          msg.reply('Joue pas avec les mots...');
         }
       }else{
         msg.reply('Sérieusement, vous connaissez une série avec plus de 50 saisons ? ...Non !');
@@ -391,6 +479,16 @@ module.exports = class UserAdder {
         }
       }else{
         msg.reply('Sérieusement, vous connaissez une série avec plus de 1000 épisodes ? ...Non !');
+      }
+    }
+  }
+  userSendOtherMessage(msg){
+    if(this.status === 4){
+      if(msg.content.length <= 1000){
+        this.sDesc = msg.content;
+        this.updateDescMessage()
+      }else{
+        msg.reply('HumHum... La description est trop longue !');
       }
     }
   }
@@ -412,7 +510,6 @@ module.exports = class UserAdder {
       var type = this.seriesTypes.search(emoji.name);
       if(type != null){
         var index = this.sTypes.indexOf(type);
-        console.log(this.sTypes.indexOf(type));
         if(index != -1){
           this.sTypes.splice(index, 1);
           this.updateTypeMessage();
@@ -431,6 +528,13 @@ module.exports = class UserAdder {
   }
   isCurrent(msgId){
     return msgId == this.currentMsg.id;
+  }
+  save(){
+
+    const Saver = require('./saver.js');
+    new Saver.sendAndSaveUserAdderData(this);
+
+
   }
 
 }

@@ -1,0 +1,38 @@
+{
+  "652086211820781568": {
+    "user": "themsou#1296",
+    "name": "test",
+    "type": [
+      "Musique et comédie musicale",
+      "steak",
+      "Type très stylé (à ne pas négliger)"
+    ],
+    "typeEmojis": [
+      "🎵",
+      "🥩",
+      "😢"
+    ],
+    "epTime": 40,
+    "seasonsNumber": 1,
+    "epNumber": 56,
+    "description": "Série de test"
+  },
+  "652090925375422474": {
+    "user": "themsou#1296",
+    "name": "test",
+    "type": [
+      "Musique et comédie musicale",
+      "steak",
+      "Type très stylé (à ne pas négliger)"
+    ],
+    "typeEmojis": [
+      "🎵",
+      "🥩",
+      "😢"
+    ],
+    "epTime": 40,
+    "seasonsNumber": 1,
+    "epNumber": 56,
+    "description": "Série de test"
+  }
+}
