@@ -1,3 +1,4 @@
+console.log('Loading index.js ...');
 var auth = require('./auth.json');
 const Discord = require('discord.js');
 const Listener = require('./seriesManager/listener.js');
@@ -9,6 +10,13 @@ client.on('ready', () => {
 
   client.user.setActivity("Bienvenue sur ce serveur !");
   new Counters.refreshCounters();
+
+/*  client.guilds.get('590252893131767808').createChannel('test des familles', {type: 'text'})/*.then((channel) => {
+
+    channel.setParent('590537413110267915');
+    channel.setName('Renamed');
+    channel.setTopic('ptite desc vitte fait');
+  });*/
 
 });
 
@@ -23,6 +31,7 @@ client.on('presenceUpdate', (oldMember, newMember) => {
 });
 
 client.on('message', msg => {
+
   new Listener.onMessage(msg);
 
   var emojis = ['🎁', '🥳', '🤟', '👋', '🙌', '👏', '🎉']
@@ -45,6 +54,9 @@ client.on('messageReactionAdd', (msgReaction, user) => {
 });
 client.on('messageReactionRemove', (msgReaction, user) => {
   new Listener.onMessageReactionRemove(msgReaction.message, msgReaction.emoji, user);
+});
+client.on('messageDelete', (msg) => {
+  new Listener.onDeleteMessage(msg);
 });
 
 client.on('raw', packet => {
@@ -72,3 +84,4 @@ function react(msg, emojis, index){
 }
 
 client.login(auth.token);
+console.log('Bot logging in...');

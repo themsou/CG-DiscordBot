@@ -1,8 +1,9 @@
 const UserAdder = require('./addSerieAsk.js');
 const HashMap = require('hashmap');
 
-const CHANNEL_ID = "615888027339980800";
+const CMD_CHANNEL_ID = "615888027339980800";
 const VOTE_CHANNEL_ID = "650735233276313630";
+const RECAP_CHANNEL_ID = "652100832698826762";
 const SERIES_TYPES = new HashMap(
   'Action', '👊🏻',
   'Ados', '🙆‍♀️',
@@ -26,7 +27,7 @@ var onMessage = function onMessage(msg){
 
   var args = msg.content.split(" ");
 
-  if(msg.channel.id == CHANNEL_ID){
+  if(msg.channel.id == CMD_CHANNEL_ID){
     if(args[0] === '/add'){
       if(args.length >= 2){
 
@@ -75,7 +76,7 @@ var onMessage = function onMessage(msg){
 }
 var onMessageReactionAdd = function onMessageReactionAdd(msg, emoji, user){
 
-  if(msg.channel.id == CHANNEL_ID){
+  if(msg.channel.id == CMD_CHANNEL_ID){
 
     var userAdder = users.get(user.tag);
     if(userAdder != null){
@@ -85,8 +86,7 @@ var onMessageReactionAdd = function onMessageReactionAdd(msg, emoji, user){
     }
   }else if(msg.channel.id == VOTE_CHANNEL_ID){
 
-    var seriesToAdd = require('./seriesToVote.json');
-
+    var seriesToAdd = requireReload('./seriesToVote.json');
 
     if(user.bot){
       return;
@@ -101,7 +101,7 @@ var onMessageReactionAdd = function onMessageReactionAdd(msg, emoji, user){
 
         if(users.get(user.tag) == null){
 
-          var userAdder = new UserAdder(users, user, client.channels.get(CHANNEL_ID), seriesToAdd[msg.id]['name']);
+          var userAdder = new UserAdder(users, user, client.channels.get(CMD_CHANNEL_ID), seriesToAdd[msg.id]['name']);
           users.set(user.tag, userAdder);
           userAdder.sTime = seriesToAdd[msg.id]['epTime'];
           userAdder.sTypes = seriesToAdd[msg.id]['type'];
@@ -118,13 +118,14 @@ var onMessageReactionAdd = function onMessageReactionAdd(msg, emoji, user){
           userAdder.sendTypeMessage();
 
         }else{
-          client.channels.get(CHANNEL_ID).send('<@' + user.id + '>, une procédure d\'ajout de série est déjà en cours, vous devez l\'annuler');
+          client.channels.get(CMD_CHANNEL_ID).send('<@' + user.id + '>, une procédure d\'ajout de série est déjà en cours, vous devez l\'annuler');
         }
 
       }else if(emoji.name === '❌'){
 
       }else if(emoji.name === '✅'){
-
+        var mergeSerieSaver = require('./mergeSerieSaver.js');
+        mergeSerieSaver.mergeAndSendData(msg.id);
       }
     }
 
@@ -132,7 +133,7 @@ var onMessageReactionAdd = function onMessageReactionAdd(msg, emoji, user){
 }
 var onMessageReactionRemove = function onMessageReactionRemove(msg, emoji, user){
 
-  if(msg.channel.id == CHANNEL_ID){
+  if(msg.channel.id == CMD_CHANNEL_ID){
 
     var userAdder = users.get(user.tag);
     if(userAdder != null){
@@ -142,9 +143,39 @@ var onMessageReactionRemove = function onMessageReactionRemove(msg, emoji, user)
     }
   }
 }
+var onDeleteMessage = function onDeleteMessage(msg){
+
+  if(msg.author.id != client.user.id){
+    return;
+  }
+
+  var seriesToVote = requireReload('./seriesToVote.json');
+  var series = requireReload('./series.json');
+  if(seriesToVote[msg.id] != null){
+    const EditJsonFile = require("edit-json-file");
+    let file = EditJsonFile('./seriesManager/seriesToVote.json');
+    file.unset(msg.id);
+    file.save();
+
+  }else if(series[msg.embeds[0].title] != null){
+    console.log("finded " + msg.embeds[0].title);
+
+    var mergeSerieSaver = require('./mergeSerieSaver.js');
+    mergeSerieSaver.unmergeAndSendData(msg.embeds[0].title);
+
+  }
+}
+var requireReload = function(modulePath){
+    delete require.cache[require.resolve(modulePath)];
+    return require(modulePath);
+};
 module.exports = {
     onMessage: onMessage,
     onMessageReactionAdd: onMessageReactionAdd,
     onMessageReactionRemove: onMessageReactionRemove,
-    users: users
+    onDeleteMessage: onDeleteMessage,
+    users: users,
+    CMD_CHANNEL_ID: CMD_CHANNEL_ID,
+    VOTE_CHANNEL_ID: VOTE_CHANNEL_ID,
+    RECAP_CHANNEL_ID: RECAP_CHANNEL_ID
 }

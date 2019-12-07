@@ -531,9 +531,14 @@ module.exports = class UserAdder {
   }
   save(){
 
-    const Saver = require('./addSerieSaver.js');
-    new Saver.sendAndSaveUserAdderData(this);
+    const SeriesMerger = require('./seriesMerger.js');
+    const SeriesManager = require('./seriesManager.js');
 
+    var json = new SeriesMerger.getVoteSerieFromAsk(this);
+    new SeriesManager.addVoteSerie(json, '');
+
+    userAdder.channel.send('<@' + userAdder.user.id + '>, La série a bien été enregistrée !');
+    userAdder.users.delete(userAdder.user.tag);
 
   }
 
