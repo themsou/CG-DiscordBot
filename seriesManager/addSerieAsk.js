@@ -537,8 +537,8 @@ module.exports = class UserAdder {
     var json = new SeriesMerger.getVoteSerieFromAsk(this);
     new SeriesManager.addVoteSerie(json, '');
 
-    userAdder.channel.send('<@' + userAdder.user.id + '>, La série a bien été enregistrée !');
-    userAdder.users.delete(userAdder.user.tag);
+    this.channel.send('<@' + this.user.id + '>, La série a bien été enregistrée !');
+    this.users.delete(this.user.tag);
 
   }
 

@@ -4,12 +4,13 @@ const Listener = require('./listener.js');
 var deleteSerie = function deleteSerie(sName, deleteMessage, deleteChannel){
 
   let file = EditJsonFile('./seriesManager/series.json');
-  if(file.get(sName) != null){
+  if(file.get(sName + "") != null){
 
     if(deleteMessage){
-      client.channels.get(Listener.RECAP_CHANNEL_ID).fetchMessage(file.get(sName + ".id")).then((msg) => msg.delete());
+      client.channels.get(Listener.RECAP_CHANNEL_ID).fetchMessage(file.get(sName + ".messageId")).then((msg) => { if(msg != null) msg.delete() });
     }if(deleteChannel){
-      client.channels.get(file.get(sName + ".channelid")).delete();
+      var channel = client.channels.get(file.get(sName + ".channelId"));
+      if(channel != null) channel.delete();
     }
 
     file.unset(sName);
@@ -19,8 +20,7 @@ var deleteSerie = function deleteSerie(sName, deleteMessage, deleteChannel){
 var deleteVoteSerie = function deleteVoteSerie(id, deleteMessage){
 
   let file = EditJsonFile('./seriesManager/seriesToVote.json');
-  if(file.get(id) != null){
-
+  if(file.get(id + "") != null){
     if(deleteMessage){
       client.channels.get(Listener.VOTE_CHANNEL_ID).fetchMessage(id).then((msg) => msg.delete());
     }
@@ -28,28 +28,44 @@ var deleteVoteSerie = function deleteVoteSerie(id, deleteMessage){
     file.unset(id);
     file.save();
   }
-
 }
 
 var addSerie = function addSerie(json, sName){
 
-  if(json.messageId == ''){
-    const SeriesMessager = require('./seriesMessager.js');
-    json.messageId = SeriesMessager.sendSerieMessage(json, sName);
-  }if(json.channelId == ''){
-    const SeriesMessager = require('./seriesMessager.js');
-    json.channelId = SeriesMessager.createSerieChannel(json, sName);
+  var series = requireReload('./series.json');
+  if(series[sName] != null){
+    deleteSerie(sName, true, true);
   }
 
-  saveSerieJson(json, sName);
+  if(json.messageId == '' && json.channelId == ''){
+    const SeriesMessager = require('./seriesMessager.js');
+
+    var chnCallback = function callback(id){
+      json.channelId = id;
+      saveSerieJson(json, sName);
+    }
+    var msgCallback = function callback(id){
+      json.messageId = id;
+      SeriesMessager.createSerieChannel(json, sName, chnCallback);
+    }
+    SeriesMessager.sendSerieMessage(json, sName, msgCallback);
+  }else{
+    saveSerieJson(json, sName);
+  }
 }
 var addVoteSerie = function addVoteSerie(json, messageId){
 
   if(messageId == ''){
+
+    var callback = function callback(id){
+      saveVoteSerieJson(json, id);
+    }
     const SeriesMessager = require('./seriesMessager.js');
-    messageId = SeriesMessager.sendVoteSerieMessage(json);
+    SeriesMessager.sendVoteSerieMessage(json, callback);
+  }else{
+    saveVoteSerieJson(json, messageId);
   }
-  saveVoteSerieJson(json, messageId);
+
 }
 
 var saveSerieJson = function saveSerie(json, sName){

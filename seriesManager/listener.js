@@ -76,6 +76,10 @@ var onMessage = function onMessage(msg){
 }
 var onMessageReactionAdd = function onMessageReactionAdd(msg, emoji, user){
 
+  if(user.bot){
+    return;
+  }
+
   if(msg.channel.id == CMD_CHANNEL_ID){
 
     var userAdder = users.get(user.tag);
@@ -88,34 +92,18 @@ var onMessageReactionAdd = function onMessageReactionAdd(msg, emoji, user){
 
     var seriesToAdd = requireReload('./seriesToVote.json');
 
-    if(user.bot){
-      return;
-    }
-
     if(seriesToAdd[msg.id] != null){
       if(emoji.name === '👍'){
 
       }else if(emoji.name === '👎'){
 
       }else if(emoji.name === '⚒️'){
-
+        msg.reactions.forEach(reaction => {if(reaction.emoji.name === emoji.name) reaction.remove(user.id)});
         if(users.get(user.tag) == null){
 
-          var userAdder = new UserAdder(users, user, client.channels.get(CMD_CHANNEL_ID), seriesToAdd[msg.id]['name']);
-          users.set(user.tag, userAdder);
-          userAdder.sTime = seriesToAdd[msg.id]['epTime'];
-          userAdder.sTypes = seriesToAdd[msg.id]['type'];
-          userAdder.sEp = seriesToAdd[msg.id]['epNumber'];
-          userAdder.sSeasons = seriesToAdd[msg.id]['seasonsNumber'];
-          userAdder.sDesc = seriesToAdd[msg.id]['description'];
-
-          var i = 0;
-          for(var type of seriesToAdd[msg.id]['type']){
-            userAdder.seriesTypes.set(type, seriesToAdd[msg.id]['typeEmojis'][i]);
-            i++;
-          }
-
-          userAdder.sendTypeMessage();
+          var SeriesMerger = requireReload('./seriesMerger.js');
+          var addSerieAsk = new SeriesMerger.getAskFromVoteSerie(seriesToAdd[msg.id], user);
+          addSerieAsk.sendTypeMessage();
 
         }else{
           client.channels.get(CMD_CHANNEL_ID).send('<@' + user.id + '>, une procédure d\'ajout de série est déjà en cours, vous devez l\'annuler');
@@ -124,9 +112,43 @@ var onMessageReactionAdd = function onMessageReactionAdd(msg, emoji, user){
       }else if(emoji.name === '❌'){
 
       }else if(emoji.name === '✅'){
-        var mergeSerieSaver = require('./mergeSerieSaver.js');
-        mergeSerieSaver.mergeAndSendData(msg.id);
+
+        var SeriesManager = requireReload('./seriesManager.js');
+        var SeriesMerger = requireReload('./seriesMerger.js');
+        var json = SeriesMerger.getSerieFromVoteSerie(seriesToAdd[msg.id], '', '');
+        SeriesManager.addSerie(json, seriesToAdd[msg.id].name);
+
+        //new SeriesManager.deleteVoteSerie(msg.id, true);
       }
+    }
+  }else if(msg.channel.id == RECAP_CHANNEL_ID && msg.embeds != null){
+    var series = requireReload('./series.json');
+
+    if(series[msg.embeds[0].title].messageId === msg.id){
+
+      if(emoji.name === '⚒️'){
+        msg.reactions.forEach(reaction => {if(reaction.emoji.name === emoji.name) reaction.remove(user.id)});
+        if(users.get(user.tag) == null){
+
+          var SeriesMerger = requireReload('./seriesMerger.js');
+          var json = new SeriesMerger.getVoteSerieFromSerie(series[msg.embeds[0].title], '', user, msg.embeds[0].title);
+          var addSerieAsk = new SeriesMerger.getAskFromVoteSerie(json, user);
+          addSerieAsk.sendTypeMessage();
+
+        }else{
+          client.channels.get(CMD_CHANNEL_ID).send('<@' + user.id + '>, une procédure d\'ajout de série est déjà en cours, vous devez l\'annuler');
+        }
+
+      }else if(emoji.name === '❌'){
+
+      }else if(emoji.name === '✅'){
+
+      }else if(emoji.name === '👍'){
+
+      }else if(emoji.name === '👎'){
+
+      }
+
     }
 
   }
@@ -152,17 +174,37 @@ var onDeleteMessage = function onDeleteMessage(msg){
   var seriesToVote = requireReload('./seriesToVote.json');
   var series = requireReload('./series.json');
   if(seriesToVote[msg.id] != null){
-    const EditJsonFile = require("edit-json-file");
-    let file = EditJsonFile('./seriesManager/seriesToVote.json');
-    file.unset(msg.id);
-    file.save();
+
+    var SeriesManager = requireReload('./seriesManager.js');
+    new SeriesManager.deleteVoteSerie(msg.id, false);
 
   }else if(series[msg.embeds[0].title] != null){
-    console.log("finded " + msg.embeds[0].title);
 
-    var mergeSerieSaver = require('./mergeSerieSaver.js');
-    mergeSerieSaver.unmergeAndSendData(msg.embeds[0].title);
+    var SeriesManager = requireReload('./seriesManager.js');
+    var SeriesMerger = requireReload('./seriesMerger.js');
 
+    var json = new SeriesMerger.getVoteSerieFromSerie(series[msg.embeds[0].title], msg.id, client.user, msg.embeds[0].title);
+
+    new SeriesManager.addVoteSerie(json, '');
+    new SeriesManager.deleteSerie(msg.embeds[0].title, false, true);
+
+  }
+}
+var onDeleteChannel = function onDeleteChannel(channel){
+
+  var series = requireReload('./series.json');
+  if(channel.parentID === client.channels.get(RECAP_CHANNEL_ID).parentID){
+    var sName = channel.topic.split('\n')[0];
+    if(series[sName] != null){
+
+      var SeriesManager = requireReload('./seriesManager.js');
+      var SeriesMerger = requireReload('./seriesMerger.js');
+
+      var json = new SeriesMerger.getVoteSerieFromSerie(series[sName], '', client.user, sName);
+
+      new SeriesManager.addVoteSerie(json, '');
+      new SeriesManager.deleteSerie(sName, true, false);
+    }
   }
 }
 var requireReload = function(modulePath){
@@ -174,6 +216,7 @@ module.exports = {
     onMessageReactionAdd: onMessageReactionAdd,
     onMessageReactionRemove: onMessageReactionRemove,
     onDeleteMessage: onDeleteMessage,
+    onDeleteChannel: onDeleteChannel,
     users: users,
     CMD_CHANNEL_ID: CMD_CHANNEL_ID,
     VOTE_CHANNEL_ID: VOTE_CHANNEL_ID,
