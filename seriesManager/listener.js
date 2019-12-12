@@ -109,16 +109,13 @@ var onMessageReactionAdd = function onMessageReactionAdd(msg, emoji, user){
           client.channels.get(CMD_CHANNEL_ID).send('<@' + user.id + '>, une procédure d\'ajout de série est déjà en cours, vous devez l\'annuler');
         }
 
-      }else if(emoji.name === '❌'){
-
       }else if(emoji.name === '✅'){
 
         var SeriesManager = requireReload('./seriesManager.js');
         var SeriesMerger = requireReload('./seriesMerger.js');
         var json = SeriesMerger.getSerieFromVoteSerie(seriesToAdd[msg.id], '', '');
         SeriesManager.addSerie(json, seriesToAdd[msg.id].name);
-
-        //new SeriesManager.deleteVoteSerie(msg.id, true);
+        new SeriesManager.deleteVoteSerie(msg.id, true);
       }
     }
   }else if(msg.channel.id == RECAP_CHANNEL_ID && msg.embeds != null){
@@ -139,16 +136,7 @@ var onMessageReactionAdd = function onMessageReactionAdd(msg, emoji, user){
           client.channels.get(CMD_CHANNEL_ID).send('<@' + user.id + '>, une procédure d\'ajout de série est déjà en cours, vous devez l\'annuler');
         }
 
-      }else if(emoji.name === '❌'){
-
-      }else if(emoji.name === '✅'){
-
-      }else if(emoji.name === '👍'){
-
-      }else if(emoji.name === '👎'){
-
       }
-
     }
 
   }
@@ -167,7 +155,10 @@ var onMessageReactionRemove = function onMessageReactionRemove(msg, emoji, user)
 }
 var onDeleteMessage = function onDeleteMessage(msg){
 
-  if(msg.author.id != client.user.id){
+  if(msg.author.tag != client.user.tag){
+    return;
+  }
+  if(msg.channel.id != VOTE_CHANNEL_ID && msg.channel.id != RECAP_CHANNEL_ID){
     return;
   }
 
@@ -183,14 +174,44 @@ var onDeleteMessage = function onDeleteMessage(msg){
     var SeriesManager = requireReload('./seriesManager.js');
     var SeriesMerger = requireReload('./seriesMerger.js');
 
-    var json = new SeriesMerger.getVoteSerieFromSerie(series[msg.embeds[0].title], msg.id, client.user, msg.embeds[0].title);
+    var json = new SeriesMerger.getVoteSerieFromSerie(series[msg.embeds[0].title], msg.id, client.user.tag, msg.embeds[0].title);
 
     new SeriesManager.addVoteSerie(json, '');
     new SeriesManager.deleteSerie(msg.embeds[0].title, false, true);
 
   }
 }
+var onDeleteRawMessage = function onDeleteRawMessage(msgId, channelId){
+
+  if(channelId === VOTE_CHANNEL_ID){
+    var seriesToVote = requireReload('./seriesToVote.json');
+    if(seriesToVote[msgId] != null){
+
+      var SeriesManager = requireReload('./seriesManager.js');
+      new SeriesManager.deleteVoteSerie(msgId, false);
+
+    }
+  }else if(channelId === RECAP_CHANNEL_ID){
+    var series = requireReload('./series.json');
+
+    for(var sName in series){
+      if(sName.messageId === msgId){
+        var SeriesManager = requireReload('./seriesManager.js');
+        var SeriesMerger = requireReload('./seriesMerger.js');
+
+        var json = new SeriesMerger.getVoteSerieFromSerie(series[sName], msgId, client.user.tag, sName);
+
+        new SeriesManager.addVoteSerie(json, '');
+        new SeriesManager.deleteSerie(sName, false, true);
+
+        return;
+      }
+    }
+
+  }
+}
 var onDeleteChannel = function onDeleteChannel(channel){
+
 
   var series = requireReload('./series.json');
   if(channel.parentID === client.channels.get(RECAP_CHANNEL_ID).parentID){
@@ -200,7 +221,7 @@ var onDeleteChannel = function onDeleteChannel(channel){
       var SeriesManager = requireReload('./seriesManager.js');
       var SeriesMerger = requireReload('./seriesMerger.js');
 
-      var json = new SeriesMerger.getVoteSerieFromSerie(series[sName], '', client.user, sName);
+      var json = new SeriesMerger.getVoteSerieFromSerie(series[sName], '', client.user.tag, sName);
 
       new SeriesManager.addVoteSerie(json, '');
       new SeriesManager.deleteSerie(sName, true, false);
@@ -216,6 +237,7 @@ module.exports = {
     onMessageReactionAdd: onMessageReactionAdd,
     onMessageReactionRemove: onMessageReactionRemove,
     onDeleteMessage: onDeleteMessage,
+    onDeleteRawMessage: onDeleteRawMessage,
     onDeleteChannel: onDeleteChannel,
     users: users,
     CMD_CHANNEL_ID: CMD_CHANNEL_ID,

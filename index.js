@@ -3,6 +3,7 @@ var auth = require('./auth.json');
 const Discord = require('discord.js');
 const Listener = require('./seriesManager/listener.js');
 const Counters = require('./counters.js');
+const Cron = require('./cron.js');
 global.client = new Discord.Client({autofetch:[
     'MESSAGE_DELETE',
     'MESSAGE_CREATE',
@@ -16,6 +17,7 @@ client.on('ready', () => {
 
   client.user.setActivity("Bienvenue sur ce serveur !");
   new Counters.refreshCounters();
+  Cron.setup();
 
 });
 
@@ -87,20 +89,14 @@ client.on('raw', packet => {
       }
     });
 
-  }/*else if(['MESSAGE_DELETE'].includes(packet.t)){
+  }else if(['MESSAGE_DELETE'].includes(packet.t)){
 
     const channel = client.channels.get(packet.d.channel_id);
-    if(channel.messages.has(packet.d.message_id)) return;
-
-    channel.fetchMessage(packet.d.message_id).then(msg => {
-      if(packet.t === 'MESSAGE_DELETE'){
-        console.log("deleting raw msg");
-        console.log(packet.d.msg.author.tag);
-        client.emit('messageDelete', packet.d.msg);
-      }
-    });
-  }*/
-
+    if(channel.messages.has(packet.d.id)) return;
+    if(packet.t === 'MESSAGE_DELETE'){
+      Listener.onDeleteRawMessage(packet.d.id, packet.d.channel_id);
+    }
+  }
 });
 
 

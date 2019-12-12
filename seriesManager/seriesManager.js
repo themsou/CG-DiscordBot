@@ -6,27 +6,31 @@ var deleteSerie = function deleteSerie(sName, deleteMessage, deleteChannel){
   let file = EditJsonFile('./seriesManager/series.json');
   if(file.get(sName + "") != null){
 
-    if(deleteMessage){
-      client.channels.get(Listener.RECAP_CHANNEL_ID).fetchMessage(file.get(sName + ".messageId")).then((msg) => { if(msg != null) msg.delete() });
-    }if(deleteChannel){
-      var channel = client.channels.get(file.get(sName + ".channelId"));
-      if(channel != null) channel.delete();
-    }
+    var messageId = file.get(sName + ".messageId");
+    var channelId = file.get(sName + ".channelId");
 
     file.unset(sName);
     file.save();
+
+    if(deleteMessage){
+      client.channels.get(Listener.RECAP_CHANNEL_ID).fetchMessage(messageId).then((msg) => { if(msg != null) msg.delete() });
+    }if(deleteChannel){
+      var channel = client.channels.get(channelId);
+      if(channel != null) channel.delete();
+    }
   }
 }
 var deleteVoteSerie = function deleteVoteSerie(id, deleteMessage){
 
   let file = EditJsonFile('./seriesManager/seriesToVote.json');
   if(file.get(id + "") != null){
-    if(deleteMessage){
-      client.channels.get(Listener.VOTE_CHANNEL_ID).fetchMessage(id).then((msg) => msg.delete());
-    }
 
     file.unset(id);
     file.save();
+    
+    if(deleteMessage){
+      client.channels.get(Listener.VOTE_CHANNEL_ID).fetchMessage(id).then((msg) => msg.delete());
+    }
   }
 }
 
