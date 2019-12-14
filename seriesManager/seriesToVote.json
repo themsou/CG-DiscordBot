@@ -17,5 +17,77 @@
     "episodeTime": 45,
     "description": "\"Le professeur\", fils d'un vandale avait préparé son coup depuis son enfance...\nIl a recruté 8 criminels pour braquer la maison royale de la monnaie d'Espagne et imprimer sur place plus de 2,4 milliards d'euros en moins de onze jours.\n\nLa série, créée de base pour les chaînes télévisées Espagnoles a été adapté en 22 épisodes de 45min par Netflix. La série est très bien pensée avec beaucoup d'intrigue et de faits inattendus.",
     "messageId": ""
+  },
+  "655418681542705202": {
+    "user": "themsou#1296",
+    "name": "Sex Education",
+    "types": [
+      "Romance",
+      "Comédie",
+      "Ados"
+    ],
+    "typesEmojis": [
+      "💕",
+      "🎭",
+      "🙆‍♀️"
+    ],
+    "seasonsNumber": 1,
+    "episodeNumber": 8,
+    "episodeTime": 45,
+    "description": "Maeve, une jeune étudiante va devenir ami avec un certain Otis. Ce dernier est fils d'une sexologue mais n'a pourtant jamais fait sa première fois. Maeve va commençer un buissiness avec Otis en proposant des conseils sur le sexe. Ils vont ainsi aider des étudiants et se faire de l'argent grâce à ça. \nUne série qui parle d'une chose encore tabou tout avec une touche d'humour !"
+  },
+  "655419269244256311": {
+    "user": "themsou#1296",
+    "name": "Riverdale",
+    "types": [
+      "Action",
+      "Drames",
+      "Horreur"
+    ],
+    "typesEmojis": [
+      "👊🏻",
+      "😳",
+      "😨"
+    ],
+    "seasonsNumber": 4,
+    "episodeNumber": 79,
+    "episodeTime": 40,
+    "description": "Sous ses airs de petite ville tranquille, Riverdale cache en réalité de sombres secrets. Alors qu’une nouvelle année scolaire débute, le jeune Archie Andrews et ses amis Betty, Jughead, et Veronica, une belle jeune fille venant tout droit de New York, voient leur quotidien bouleversé par la mort mystérieuse de Jason Blossom, un de leurs camarades de lycée. \nNaviguant entre les eaux troubles du sexe, de l'amour, de l'éducation et de la famille, Archie et ses amis se retrouvent plongés au coeur d'une mystérieuse affaire."
+  },
+  "655429340678455296": {
+    "user": "CinéBOT#9835",
+    "name": "Stranger Things",
+    "types": [
+      "SF et fantastique",
+      "Horreur",
+      "Action"
+    ],
+    "typesEmojis": [
+      "👽",
+      "😨",
+      "👊🏻"
+    ],
+    "seasonsNumber": 3,
+    "episodeNumber": 25,
+    "episodeTime": 50,
+    "description": "Novembre 1983 à Hakwins, petite ville située dans l'Indiana aux Etats-Unis. Un soir, Will Byers disparait subitement en ne laissant que son vélo derrière lui. Sa mère (Joyce) fut très inquiète et ses amis (Mike, Dustin, Lucas) aussi. La mère décide d'enquêter avec le chef de police Jim Hopper. Quand aux amis de Will, ils décident d'enquêter eux-même. D'étranges phénomènes se multiplient dans toute la ville.  Les amis de Will vont rapidement faire une recontre innatendue dans la forêt. Ils découvrent que la petite ville qu'est Hakwins cache un monde à part...",
+    "messageId": "655428597258911774"
+  },
+  "655430007312875543": {
+    "user": "CinéBOT#9835",
+    "name": "Umbrella Academy",
+    "types": [
+      "SF et fantastique",
+      "Action"
+    ],
+    "typesEmojis": [
+      "👽",
+      "👊🏻"
+    ],
+    "seasonsNumber": 1,
+    "episodeNumber": 10,
+    "episodeTime": 60,
+    "description": "Un phénomène étonnant se produit dans le monde: 43 enfants sont nés en même temps sans que leurs mères soient tombées enceinte. Mrs Hargreeves, un milliardaire décide d'en \"acheter\" 7. Ces enfants sont spéciaux: ils possèdent des pouvoirs surnaturels. Les années passent jusqu'à la mort de leur père. Ils se retrouvent pour affronter une menace planètaire...",
+    "messageId": ""
   }
 }

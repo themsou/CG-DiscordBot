@@ -1,1 +1,15 @@
-{}
+{
+  "The Society": {
+    "types": [
+      "🙆‍♀️ Ados",
+      "😳 Drames",
+      "👊🏻 Action"
+    ],
+    "seasonsNumber": 1,
+    "episodeNumber": 10,
+    "description": "Un groupe d'adolescent devait se rendre en voyage scolaire. Malheureusement, la route est bouchée par un arbre à cause d'une forte tempête. Ils doivent faire demi-tour. C'est là qu'ils découvrent que leur ville est totalement vide: plus personnes, ni même leurs parents. Ils vont devoir se gérer tout seuls. Cependant, la bétise humaine est présente et de nombreux changements vont tout bousculer...",
+    "episodeTime": 50,
+    "messageId": "655430047712411669",
+    "channelId": "655430049432076293"
+  }
+}

@@ -27,7 +27,7 @@ var deleteVoteSerie = function deleteVoteSerie(id, deleteMessage){
 
     file.unset(id);
     file.save();
-    
+
     if(deleteMessage){
       client.channels.get(Listener.VOTE_CHANNEL_ID).fetchMessage(id).then((msg) => msg.delete());
     }

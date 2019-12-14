@@ -2,6 +2,7 @@ console.log('Loading index.js ...');
 var auth = require('./auth.json');
 const Discord = require('discord.js');
 const Listener = require('./seriesManager/listener.js');
+const SeriesTask = require('./seriesManager/seriesTask.js');
 const Counters = require('./counters.js');
 const Cron = require('./cron.js');
 global.client = new Discord.Client({autofetch:[
@@ -11,9 +12,11 @@ global.client = new Discord.Client({autofetch:[
     'MESSAGE_REACTION_ADD',
     'MESSAGE_REACTION_REMOVE',
 ]});
+global.guild = client.guilds.get('590252893131767808');
 
 client.on('ready', () => {
   console.log(`Connexion en tant que ${client.user.tag}!`);
+  global.guild = client.guilds.get('590252893131767808');
 
   client.user.setActivity("Bienvenue sur ce serveur !");
   new Counters.refreshCounters();
@@ -50,6 +53,11 @@ client.on('message', msg => {
 
 });
 client.on('messageReactionAdd', (msgReaction, user) => {
+  if(!user.bot && msgReaction.message.channel.id === Listener.VOTE_CHANNEL_ID && (msgReaction.emoji.name === '👍' || msgReaction.emoji.name === '👎')){
+    setTimeout(function() {
+      SeriesTask.checkAddSerie();
+    }, 5000);
+  }
   Listener.onMessageReactionAdd(msgReaction.message, msgReaction.emoji, user);
 });
 client.on('messageReactionRemove', (msgReaction, user) => {
