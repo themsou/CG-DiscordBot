@@ -2,6 +2,7 @@ var CronJob = require('cron').CronJob;
 const HashMap = require('hashmap');
 const Listener = require('./seriesManager/listener.js');
 const SeriesTask = require('./seriesManager/seriesTask.js');
+const ActiveMemberManager = require('./activeMemberManager.js');
 
 var setup = function setup(){
 
@@ -9,6 +10,8 @@ var setup = function setup(){
 
 
     SeriesTask.checkRemoveSerie();
+
+    ActiveMemberManager.day();
 
 
   }, null, true, 'Europe/Paris');

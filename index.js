@@ -3,6 +3,7 @@ var auth = require('./auth.json');
 const Discord = require('discord.js');
 const Listener = require('./seriesManager/listener.js');
 const SeriesTask = require('./seriesManager/seriesTask.js');
+const ActiveMemberManager = require('./activeMemberManager.js');
 const Counters = require('./counters.js');
 const Cron = require('./cron.js');
 global.client = new Discord.Client({autofetch:[
@@ -13,6 +14,8 @@ global.client = new Discord.Client({autofetch:[
     'MESSAGE_REACTION_REMOVE',
 ]});
 global.guild = client.guilds.get('590252893131767808');
+
+
 
 client.on('ready', () => {
   console.log(`Connexion en tant que ${client.user.tag}!`);
@@ -36,6 +39,7 @@ client.on('presenceUpdate', (oldMember, newMember) => {
 
 client.on('message', msg => {
   Listener.onMessage(msg);
+  ActiveMemberManager.message(msg.author);
 
   var emojis = ['🎁', '🥳', '🤟', '👋', '🙌', '👏', '🎉']
 
@@ -50,6 +54,8 @@ client.on('message', msg => {
   }else if(msg.channel.id === '593313570909847592'){ // #Idées
     react(msg, ['👍', '👎'], 0);
   }
+
+
 
 });
 client.on('messageReactionAdd', (msgReaction, user) => {
