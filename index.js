@@ -123,4 +123,5 @@ function react(msg, emojis, index){
 }
 
 client.login(auth.token);
+
 console.log('Bot logging in...');

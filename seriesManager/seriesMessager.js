@@ -10,7 +10,26 @@ var createSerieChannel = function createSerieChannel(json, sName, callback){
       types += ' / ';
     }
   }
+
+  if(json.channelId != ''){
+    if(client.channels.get(json.channelId) != undefined){
+
+      var channel = client.channels.get(json.channelId);
+      channel.setParent(client.channels.get(Listener.RECAP_CHANNEL_ID).parent);
+      channel.setTopic(sName + '\n\n'
+                        + json.description
+                        + '\n\nGenre·s : ' + types
+                        + '\nDurée : ' + json.episodeTime + 'mn par épisode, ≈' + Math.floor((json.episodeTime/60) * json.episodeNumber) + 'h'
+                        + '\nÉpisodes : ' + json.seasonsNumber + ' Saisons, ' + json.episodeNumber + ' Épisodes');
+
+      callback(json.channelId);
+
+      return;
+    }
+  }
+
   client.guilds.get('590252893131767808').createChannel(sName, {type: 'text'}).then(channel => {
+
     channel.setParent(client.channels.get(Listener.RECAP_CHANNEL_ID).parent);
     channel.setTopic(sName + '\n\n'
                       + json.description
@@ -24,6 +43,22 @@ var createSerieChannel = function createSerieChannel(json, sName, callback){
 var sendSerieMessage = async function sendSerieMessage(json, sName, callback){
 
   var embed = getSerieEmbed(json, sName);
+
+  if(json.messageId != ''){
+    client.channels.get(Listener.RECAP_CHANNEL_ID).fetchMessage(json.messageId).then((msg) => {
+      if(msg != null){
+
+        msg.edit({embed: embed}).then(msg => {
+          console.log("callback");
+          callback(msg.id);
+          console.log("end");
+        }).catch(console.error());
+
+      }
+    }).catch(console.error);
+    return;
+  }
+
   client.channels.get(Listener.RECAP_CHANNEL_ID).send({embed}).then(msg => {
     react(msg, ['⚒️', '⭕', '🅾️', '🅱️', '🆎', '🅰️'], 0);
     callback(msg.id);

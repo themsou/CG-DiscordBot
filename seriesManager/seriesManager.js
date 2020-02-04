@@ -20,6 +20,7 @@ var deleteSerie = function deleteSerie(sName, deleteMessage, deleteChannel){
     }
   }
 }
+
 var deleteVoteSerie = function deleteVoteSerie(id, deleteMessage){
 
   let file = EditJsonFile('./seriesManager/seriesToVote.json');
@@ -38,25 +39,24 @@ var addSerie = function addSerie(json, sName){
 
   var series = requireReload('./series.json');
   if(series[sName] != null){
-    deleteSerie(sName, true, true);
+    json.channelId = series[sName].channelId;
+    json.messageId = series[sName].messageId;
+    deleteSerie(sName, false, false);
   }
 
-  if(json.messageId == '' && json.channelId == ''){
-    const SeriesMessager = require('./seriesMessager.js');
+  const SeriesMessager = require('./seriesMessager.js');
 
-    var chnCallback = function callback(id){
-      json.channelId = id;
-      saveSerieJson(json, sName);
-    }
-    var msgCallback = function callback(id){
-      json.messageId = id;
-      SeriesMessager.createSerieChannel(json, sName, chnCallback);
-    }
-    SeriesMessager.sendSerieMessage(json, sName, msgCallback);
-  }else{
+  var chnCallback = function callback(id){
+    json.channelId = id;
     saveSerieJson(json, sName);
   }
+  var msgCallback = function callback(id){
+    json.messageId = id;
+    SeriesMessager.createSerieChannel(json, sName, chnCallback);
+  }
+  SeriesMessager.sendSerieMessage(json, sName, msgCallback);
 }
+
 var addVoteSerie = function addVoteSerie(json, messageId){
 
   if(messageId == ''){
