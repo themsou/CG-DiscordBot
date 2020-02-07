@@ -1,6 +1,6 @@
 ## CG-DiscordBOT
 
-**Ce Bot discord est mon premier projet avec Node.js, le but est de faire un BOT pour un serveur personel : CinéphileGang**
+**Ce Bot discord est mon premier projet avec Node.js, le but est de faire un BOT pour un seul serveur Discord : CinéphileGang**
 
 Ce bot a pour but d'offrir plusieurs fonctions dont :
 - Gestions de séries et de salons dédiés aux séries proposés et votés par la communauté
@@ -44,7 +44,7 @@ Dans l'ordre :
 
 **Gestion des membres actifs**
 
-``index`` apelle ``activeMemberManager`` lorsqu'un message est envoyé pour pouvoir l'enregistrer.
+``index`` apelle ``activeMemberManager`` lorsqu'un message est envoyé pour pouvoir l'enregistrer dans ``members.json``.
 Tous les jours, ``cron`` apelle ``activeMemberManager`` pour que activeMemberManager ajoute ou retire le grade @membreActif aux membres en fonction du nombre de messages envoyés les 7 derniers jours.
 
 ## Les APIs
