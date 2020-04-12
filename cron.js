@@ -6,13 +6,10 @@ const ActiveMemberManager = require('./activeMemberManager.js');
 
 var setup = function setup(){
 
-  const job = new CronJob('0 0 0 * * *', function() {
-
+  const job = new CronJob('0 10 0 * * *', function() {
 
     SeriesTask.checkRemoveSerie();
-
     ActiveMemberManager.day();
-
 
   }, null, true, 'Europe/Paris');
 

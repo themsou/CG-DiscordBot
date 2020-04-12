@@ -44,6 +44,8 @@ var day = function day(){
 }
 var message = function message(author){
 
+  if(author.bot) return;
+
   let file = EditJsonFile('./members.json');
 
   var msgs = file.get(author.tag + '.messages.sended.days.' + new Date().getDay());
