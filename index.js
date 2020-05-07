@@ -55,8 +55,6 @@ client.on('message', msg => {
     react(msg, ['👍', '👎'], 0);
   }
 
-
-
 });
 client.on('messageReactionAdd', (msgReaction, user) => {
   if(!user.bot && msgReaction.message.channel.id === Listener.VOTE_CHANNEL_ID && (msgReaction.emoji.name === '👍' || msgReaction.emoji.name === '👎')){
