@@ -4,6 +4,7 @@ const Discord = require('discord.js');
 const Listener = require('./seriesManager/listener.js');
 const SeriesTask = require('./seriesManager/seriesTask.js');
 const ActiveMemberManager = require('./activeMemberManager.js');
+const JoinNLeaveMessages = require('./joinNLeaveMessages.js');
 const Counters = require('./counters.js');
 const Cron = require('./cron.js');
 global.client = new Discord.Client({autofetch:[
@@ -27,11 +28,15 @@ client.on('ready', () => {
 
 });
 
-client.on('guildMemberAdd', () => {
+client.on('guildMemberAdd', (member) => {
   new Counters.refreshCounters();
+
+  new JoinNLeaveMessages.join(member);
 });
-client.on('guildMemberRemove', () => {
+client.on('guildMemberRemove', (member) => {
   new Counters.refreshCounters();
+
+  new JoinNLeaveMessages.leave(member);
 });
 client.on('presenceUpdate', (oldMember, newMember) => {
   new Counters.refreshCounters();

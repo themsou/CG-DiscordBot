@@ -6,10 +6,10 @@ var refreshCounters = function refreshCounters(msg){
 
   var onlineMembersCount = guild.members.filter(member => {return (!member.user.bot) && (member.user.presence.status === 'dnd' || member.user.presence.status === 'online' || member.user.presence.status === 'idle')}).size;
   var membersCount = guild.members.filter(member => !member.user.bot).size;
-  var membersActiveCount = guild.members.filter(member.roles.find(r => r.id === "590542640727064617")).size;
+  var membersActiveCount = guild.members.filter(member => member.roles.find(r => r.id === "590542640727064617")).size;
 
   membersChannel.setName('Membres : ' + membersCount);
-  membersChannel.setName('Membres actifs : ' + membersActiveCount);
+  membersActiveChannel.setName('Membres actifs : ' + membersActiveCount);
   countersCath.setName('STATISTIQUES (' + onlineMembersCount + '/' + membersCount + ')');
 
 }
