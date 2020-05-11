@@ -3,7 +3,7 @@ const EditJsonFile = require("edit-json-file");
 const HashMap = require('hashmap');
 
 var join = function join(member){
-  var homeChannel = client.channels.get("707942561456586905");
+  var homeChannel = client.channels.get("590252893131767810");
   var emojis = ['🎁', '🥳', '🤟', '👋', '🙌', '👏', '🎉'];
 
   member.addRole('590538527989563392');
@@ -19,7 +19,7 @@ var join = function join(member){
 
 }
 var leave = function leave(member){
-  var homeChannel = client.channels.get("707942561456586905");
+  var homeChannel = client.channels.get("590252893131767810");
   var emojis = ['😢', '😡', '🥶', '📤', '⁉️', '🧤', '🕵️'];
 
   homeChannel.send("R.I.P...  " + member.user.tag + " viens de nous quitter").then(msg => {
