@@ -30,12 +30,10 @@ client.on('ready', () => {
 
 client.on('guildMemberAdd', (member) => {
   new Counters.refreshCounters();
-
   new JoinNLeaveMessages.join(member);
 });
 client.on('guildMemberRemove', (member) => {
   new Counters.refreshCounters();
-
   new JoinNLeaveMessages.leave(member);
 });
 client.on('presenceUpdate', (oldMember, newMember) => {

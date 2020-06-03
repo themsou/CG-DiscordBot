@@ -26,11 +26,25 @@ var day = function day(){
         totalMsgs += (msgs === undefined) ? 0 : msgs;
       }
 
-      // Ajoute le rôle MembreActif si la personne a envoyé plus de 30 messages
       if(totalMsgs >= 30){
-        member.addRole('590542640727064617');
+        member.addRole('712619370077225010');
       }else{
-        member.removeRole('590542640727064617');
+        member.removeRole('712619370077225010');
+      }
+      if(totalMsgs >= 60){
+        member.addRole('712620267037392916');
+      }else{
+        member.removeRole('712620267037392916');
+      }
+      if(totalMsgs >= 100){
+        member.addRole('712620584659451984');
+      }else{
+        member.removeRole('712620584659451984');
+      }
+      if(totalMsgs >= 200){
+        member.addRole('712620923131396146');
+      }else{
+        member.removeRole('712620923131396146');
       }
 
       // Set le nombre de messages envoyés aujourd'hui à 0
