@@ -7,13 +7,15 @@ const Instagram = require('./instagram.js');
 
 var setup = function setup(){
 
-  const job = new CronJob('0 10 0 * * *', function() {
+  const job = new CronJob('0 0 5 * * *', function() {
 
     SeriesTask.checkRemoveSerie();
     ActiveMemberManager.day();
 
   }, null, true, 'Europe/Paris');
   job.start();
+
+ActiveMemberManager.day();
 
   const job2 = new CronJob('0 0 * * * *', function() {
 
