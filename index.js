@@ -1,12 +1,15 @@
 console.log('Loading index.js ...');
-var auth = require('./auth.json');
+
+const auth = require('./auth.json');
+const Cron = require('./cron.js');
 const Discord = require('discord.js');
 const Listener = require('./seriesManager/listener.js');
 const SeriesTask = require('./seriesManager/seriesTask.js');
 const ActiveMemberManager = require('./activeMemberManager.js');
 const JoinNLeaveMessages = require('./joinNLeaveMessages.js');
 const Counters = require('./counters.js');
-const Cron = require('./cron.js');
+
+
 global.client = new Discord.Client({autofetch:[
     'MESSAGE_DELETE',
     'MESSAGE_CREATE',
@@ -15,8 +18,6 @@ global.client = new Discord.Client({autofetch:[
     'MESSAGE_REACTION_REMOVE',
 ]});
 global.guild = client.guilds.get('590252893131767808');
-
-
 
 client.on('ready', () => {
   console.log(`Connexion en tant que ${client.user.tag}!`);

@@ -4,10 +4,13 @@
   "description": "Bot discord pour CineGang",
   "main": "index.js",
   "dependencies": {
+    "bufferutil": "^4.0.1",
     "cron": "^1.7.2",
     "discord.js": "^11.5.1",
     "edit-json-file": "^1.3.2",
     "hashmap": "^2.4.0",
+    "instagram-private-api": "^1.40.1",
+    "utf-8-validate": "^5.0.2",
     "winston": "^3.2.1"
   },
   "devDependencies": {},

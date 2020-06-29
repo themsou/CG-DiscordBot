@@ -3,6 +3,7 @@ const HashMap = require('hashmap');
 const Listener = require('./seriesManager/listener.js');
 const SeriesTask = require('./seriesManager/seriesTask.js');
 const ActiveMemberManager = require('./activeMemberManager.js');
+const Instagram = require('./instagram.js');
 
 var setup = function setup(){
 
@@ -12,10 +13,17 @@ var setup = function setup(){
     ActiveMemberManager.day();
 
   }, null, true, 'Europe/Paris');
-
   job.start();
-  console.log("Cron tasks are started !");
 
+  const job2 = new CronJob('0 0 * * * *', function() {
+
+    Instagram.update();
+
+  }, null, true, 'Europe/Paris');
+  job2.start();
+  Instagram.update();
+
+  console.log("Cron tasks are started !");
 }
 module.exports = {
   setup: setup

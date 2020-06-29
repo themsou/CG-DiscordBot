@@ -47,6 +47,10 @@ Dans l'ordre :
 ``index`` apelle ``activeMemberManager`` lorsqu'un message est envoyé pour pouvoir l'enregistrer dans ``members.json``.
 Tous les jours, ``cron`` apelle ``activeMemberManager`` pour que activeMemberManager ajoute ou retire le grade @membreActif aux membres en fonction du nombre de messages envoyés les 7 derniers jours.
 
+**Posts Instagram de @netflixfr**
+
+``crol`` apelle ``instagram`` toutes les heures. ``instagram`` se connecte à Instagram et récupère le dernier post de @netflixfr. Si le post est nouveau, il envoie un message qui affiche ce post.
+
 ## Les APIs
 
 J'ai utilisé uniquement des modules npm :
@@ -54,3 +58,4 @@ J'ai utilisé uniquement des modules npm :
 - edit-json-file pour éditer facilement les fichiers JSON
 - cron pour planifier divers taches (Pour le calcul membres actifs ou les votes de séries).
 - hashmap pour pouvoir enregistrer facilement toutes les instances de addSerieAsk (et pouvoir les associer à des utilisateurs) par exemple.
+- instagram-private-api pour récupérer des informations sur Instagram
