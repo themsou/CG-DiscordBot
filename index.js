@@ -48,6 +48,11 @@ client.on('presenceUpdate', (oldMember, newMember) => {
 
 client.on('message', msg => {
   if(msg.author.bot) return;
+
+  if(msg.content === "ping"){
+    msg.channel.send("Pong - " + (Date.now() - msg.createdTimestamp) + " ms");
+    return;
+  }
   
   if(msg.channel instanceof Discord.TextChannel){
     if(msg.guild.id === guild.id){

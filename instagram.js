@@ -46,7 +46,6 @@ var updatePosts = function updatePosts(){
       var i = 0;
       for(const imageUrl in imagesUrl){
         var embed = new Discord.RichEmbed()
-          .setTitle()
           .setAuthor("@netflixfr", firstPage[0].user.profile_pic_url)
           .setFooter('Depuis Instagram', "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/480px-Instagram_icon.png")
           .setImage(imagesUrl[i]);
