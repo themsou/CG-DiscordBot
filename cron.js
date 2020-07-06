@@ -19,11 +19,11 @@ ActiveMemberManager.day();
 
   const job2 = new CronJob('0 0 * * * *', function() {
 
-    Instagram.update();
+    Instagram.updatePosts();
 
   }, null, true, 'Europe/Paris');
   job2.start();
-  Instagram.update();
+  Instagram.updatePosts();
 
   console.log("Cron tasks are started !");
 }

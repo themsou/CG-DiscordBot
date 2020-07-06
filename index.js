@@ -8,7 +8,7 @@ const SeriesTask = require('./seriesManager/seriesTask.js');
 const ActiveMemberManager = require('./activeMemberManager.js');
 const JoinNLeaveMessages = require('./joinNLeaveMessages.js');
 const Counters = require('./counters.js');
-
+const Instagram = require('./instagram.js');
 
 global.client = new Discord.Client({autofetch:[
     'MESSAGE_DELETE',
@@ -18,47 +18,81 @@ global.client = new Discord.Client({autofetch:[
     'MESSAGE_REACTION_REMOVE',
 ]});
 global.guild = client.guilds.get('590252893131767808');
+global.guild1 = client.guilds.get('719110773191737405');
 
 client.on('ready', () => {
   console.log(`Connexion en tant que ${client.user.tag}!`);
   global.guild = client.guilds.get('590252893131767808');
+  global.guild1 = client.guilds.get('719110773191737405');
 
-  client.user.setActivity("Bienvenue sur ce serveur !");
+  client.user.setActivity("BOT Privé, développé par themsou#1296");
   new Counters.refreshCounters();
   Cron.setup();
-
 });
 
 client.on('guildMemberAdd', (member) => {
-  new Counters.refreshCounters();
-  new JoinNLeaveMessages.join(member);
+  if(member.guild.id === guild.id){
+    new Counters.refreshCounters();
+    new JoinNLeaveMessages.join(member);
+  }
 });
 client.on('guildMemberRemove', (member) => {
-  new Counters.refreshCounters();
-  new JoinNLeaveMessages.leave(member);
+  if(member.guild.id === guild.id){
+    new Counters.refreshCounters();
+    new JoinNLeaveMessages.leave(member);
+  }
 });
 client.on('presenceUpdate', (oldMember, newMember) => {
   new Counters.refreshCounters();
 });
 
 client.on('message', msg => {
-  Listener.onMessage(msg);
-  ActiveMemberManager.message(msg.author);
+  if(msg.author.bot) return;
+  
+  if(msg.channel instanceof Discord.TextChannel){
+    if(msg.guild.id === guild.id){
+      Listener.onMessage(msg);
+      ActiveMemberManager.message(msg.author);
 
-  var emojis = ['🎁', '🥳', '🤟', '👋', '🙌', '👏', '🎉']
+      var emojis = ['🎁', '🥳', '🤟', '👋', '🙌', '👏', '🎉']
 
-  if(msg.channel.id === '651884727141138462'){ // #Présentations
-    var r = Math.floor(Math.random() * Math.floor(7));
-    msg.react(emojis[r]);
-    if(Math.floor(Math.random() * Math.floor(5)) === 0){
-      var r = Math.floor(Math.random() * Math.floor(7));
-      msg.react(emojis[r]);
+      if(msg.channel.id === '651884727141138462'){ // #Présentations
+        var r = Math.floor(Math.random() * Math.floor(7));
+        msg.react(emojis[r]);
+        if(Math.floor(Math.random() * Math.floor(5)) === 0){
+          var r = Math.floor(Math.random() * Math.floor(7));
+          msg.react(emojis[r]);
+        }
+    
+      }else if(msg.channel.id === '593313570909847592'){ // #Idées
+        react(msg, ['👍', '👎'], 0);
+      }
     }
-
-  }else if(msg.channel.id === '593313570909847592'){ // #Idées
-    react(msg, ['👍', '👎'], 0);
+  }else{
+    var command = msg.content.split(' ')[0];
+    var length = msg.content.split(' ').length;
+    if(command.toLowerCase() === 'linkinsta' && length == 3){
+      var userName = msg.content.split(' ')[1];
+      var password = msg.content.split(' ')[2];
+      Instagram.userRegister(msg.author, userName, password, msg.channel);
+    }else{
+      const embed = {
+        color: 468468,
+        title: "Commandes disponibles :",
+        fields: [
+          {
+            name: 'linkinsta <pseudo instagram> <mot de passe instagram>',
+            value: 'Connecter son compte discord à Instagram. Cela permet de liker et commenter des posts directement depuis notre serveur Discord.'
+          }
+        ],
+        footer: {
+          text: 'Cinéphile Gang - Communauté Netflix',
+          icon_url: client.user.avatarURL
+        }
+      }
+      msg.channel.send({embed});
+    }
   }
-
 });
 client.on('messageReactionAdd', (msgReaction, user) => {
   if(!user.bot && msgReaction.message.channel.id === Listener.VOTE_CHANNEL_ID && (msgReaction.emoji.name === '👍' || msgReaction.emoji.name === '👎')){
