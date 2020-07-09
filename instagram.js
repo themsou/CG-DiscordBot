@@ -12,8 +12,6 @@ var updatePosts = function updatePosts(){
   const ig = new IgApiClient(); 
 
   ig.state.generateDevice("themsbot_ldv");
-  // Optionally you can setup proxy url
-  //ig.state.proxyUrl = process.env.IG_PROXY;
   (async () => {
     await ig.simulate.preLoginFlow();
 
@@ -47,7 +45,8 @@ var updatePosts = function updatePosts(){
       for(const imageUrl in imagesUrl){
         var embed = new Discord.RichEmbed()
           .setAuthor("@netflixfr", firstPage[0].user.profile_pic_url)
-          .setFooter('Depuis Instagram', "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/480px-Instagram_icon.png")
+          .setFooter('Depuis Instagram\nID=' + firstPage[0].id, "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/480px-Instagram_icon.png")
+          .setTimestamp()
           .setImage(imagesUrl[i]);
 
         if(i == 0){
@@ -62,14 +61,14 @@ var updatePosts = function updatePosts(){
 
         await client.channels.get(ACTU_CHANNEL_ID).send({embed}).then(msg => {
           if(i == 0){
-            react(msg, ['📺', '🤔', '😱', '👌', '🤬'], 0);
+            react(msg, ['📺', '🤔', '😱', '👌', '🤬', '❤️'], 0);
           }
         });
-        await client.channels.get(GUILD1_NETFLIX_CHANNEL_ID).send({embed}).then(msg => {
+        /*await client.channels.get(GUILD1_NETFLIX_CHANNEL_ID).send({embed}).then(msg => {
           if(i == 0){
-            react(msg, ['📺', '🤔', '😱', '👌', '🤬'], 0);
+            react(msg, ['📺', '🤔', '😱', '👌', '🤬', '❤️'], 0);
           }
-        });
+        });*/
         i++;
       }
     }
@@ -81,7 +80,6 @@ var userRegister = function userRegister(user, userName, password, channel){
   const ig = new IgApiClient(); 
 
   channel.send("Connexion à Instagram...");
-
   ig.state.generateDevice(userName);
   (async () => {
     try{
@@ -102,45 +100,83 @@ var userRegister = function userRegister(user, userName, password, channel){
     }
   })();
 }
-var userLike = function userLike(user, post, unlike){
+var userLike = function userLike(user, postId, unlike, msg, emoji){
+
+  const members = requireReload('./members.json');
+  var userName = undefined;
+  var password = undefined;
+  
+  if(members[user.tag] != undefined){
+    if(members[user.tag].instagram != undefined){
+      if(members[user.tag].instagram.login != undefined){
+        if(members[user.tag].instagram.login.userName != undefined){
+          userName = members[user.tag].instagram.login.userName;
+        }
+        if(members[user.tag].instagram.login.encryptedPassword != undefined){
+          password = Crypter.decrypt(members[user.tag].instagram.login.encryptedPassword);
+        }
+      }
+    }
+  }
+  
+  if(userName === undefined || password === undefined){
+    user.send("Votre compte n'est pas lié à Instagram donc vous ne pouvez pas liker/unliker ce post.\nUtilisez la commande ``linkinsta <pseudo> <mot de passe>`` pour lier votre compte à Instagram.");
+    msg.reactions.forEach(r => {if(r.emoji.name === emoji) r.remove(user.id)});
+    return;
+  }
+
   const { IgApiClient } = require("instagram-private-api");
   const ig = new IgApiClient(); 
 
-  ig.state.generateDevice("themsbot_ldv");
-  // Optionally you can setup proxy url
   //ig.state.proxyUrl = process.env.IG_PROXY;
+  ig.state.generateDevice(userName);
   (async () => {
-    await ig.simulate.preLoginFlow();
+    try{
+      await ig.simulate.preLoginFlow();
+      const loggedInUser = await ig.account.login(userName, password);
+      process.nextTick(async () => await ig.simulate.postLoginFlow());
 
-    const loggedInUser = await ig.account.login("themsbot_ldv", auth.impass);
-    const netflixId = await ig.user.getIdByUsername("netflixfr");
+      try{
+          if(!unlike){
+            await ig.media.like({
+              mediaId: postId,
+              moduleInfo: {
+                module_name: 'profile',
+                user_id: loggedInUser.pk,
+                username: loggedInUser.username,
+              },
+              d: 0
+            });
+          }else{
+            await ig.media.unlike({
+              mediaId: postId,
+              moduleInfo: {
+                module_name: 'profile',
+                user_id: loggedInUser.pk,
+                username: loggedInUser.username,
+              },
+              d: 0
+            });
+          }
+        }catch(e){
+          user.send("Impossible de récupérer le post que vous souhaitez liker : " + e);
+          msg.reactions.forEach(r => {if(r.emoji.name === emoji) r.remove(user.id)});
+          return;
+        }
 
-    process.nextTick(async () => await ig.simulate.postLoginFlow());
-    const userFeed = ig.feed.user(netflixId);
-
-    const myPostsFirstPage = await userFeed.items();
-    // All the feeds are auto-paginated, so you just need to call .items() sequentially to get next page
-    const myPostsSecondPage = await userFeed.items();
-    await ig.media.like({
-      // Like our first post from first page or first post from second page randomly
-      mediaId: sample([myPostsFirstPage[0].id, myPostsSecondPage[0].id]),
-      moduleInfo: {
-        module_name: 'profile',
-        user_id: loggedInUser.pk,
-        username: loggedInUser.username,
-      },
-      d: sample([0, 1]),
-    });
-    
+    }catch(e){
+      user.send("Impossible de se connecter à Instagram : " + e + "\nEssayez de re-lier votre compte.");
+      msg.reactions.forEach(r => {if(r.emoji.name === emoji) r.remove(user.id)});
+      return;
+    }
   })();
 }
 var userComment = function userComment(user, post, comment){
   const { IgApiClient } = require("instagram-private-api");
   const ig = new IgApiClient(); 
 
+  ig.state.proxyUrl = process.env.IG_PROXY;
   ig.state.generateDevice("themsbot_ldv");
-  // Optionally you can setup proxy url
-  //ig.state.proxyUrl = process.env.IG_PROXY;
   (async () => {
     await ig.simulate.preLoginFlow();
 
@@ -216,5 +252,7 @@ module.exports = {
     updatePosts: updatePosts,
     userRegister: userRegister,
     userLike: userLike,
-    userComment: userComment
+    userComment: userComment,
+    ACTU_CHANNEL_ID: ACTU_CHANNEL_ID,
+    GUILD1_NETFLIX_CHANNEL_ID: GUILD1_NETFLIX_CHANNEL_ID
 }

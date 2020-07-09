@@ -34,6 +34,15 @@ client.on('guildMemberAdd', (member) => {
   if(member.guild.id === guild.id){
     new Counters.refreshCounters();
     new JoinNLeaveMessages.join(member);
+
+    /*var embed = new Discord.RichEmbed()
+    .addField("")
+    .setTimestamp();
+
+    client.users.get("317600247754915840").send({embed}).then(msg => {
+        react(msg, ['📺', '🤔', '😱', '👌', '🤬'], 0);
+    });*/
+
   }
 });
 client.on('guildMemberRemove', (member) => {
@@ -100,16 +109,28 @@ client.on('message', msg => {
   }
 });
 client.on('messageReactionAdd', (msgReaction, user) => {
-  if(!user.bot && msgReaction.message.channel.id === Listener.VOTE_CHANNEL_ID && (msgReaction.emoji.name === '👍' || msgReaction.emoji.name === '👎')){
-    setTimeout(function() {
-      SeriesTask.checkAddSerie();
-    }, 5000);
+  if(!user.bot){
+    if(msgReaction.message.channel.id === Listener.VOTE_CHANNEL_ID && (msgReaction.emoji.name === '👍' || msgReaction.emoji.name === '👎')){
+      setTimeout(function() {
+        SeriesTask.checkAddSerie();
+      }, 5000);
+    }else if(msgReaction.message.channel.id === Instagram.ACTU_CHANNEL_ID || msgReaction.message.channel.id === Instagram.GUILD1_NETFLIX_CHANNEL_ID){
+      if(msgReaction.emoji.name === '❤️'){
+        Instagram.userLike(user, msgReaction.message.embeds[0].footer.text.split('ID=')[1], false, msgReaction.message, msgReaction.emoji.name);
+      }
+    }
+    
   }
   Listener.onMessageReactionAdd(msgReaction.message, msgReaction.emoji, user);
 });
 client.on('messageReactionRemove', (msgReaction, user) => {
   if(msgReaction != undefined){
     Listener.onMessageReactionRemove(msgReaction.message, msgReaction.emoji, user);
+    if(msgReaction.message.channel.id === Instagram.ACTU_CHANNEL_ID || msgReaction.message.channel.id === Instagram.GUILD1_NETFLIX_CHANNEL_ID){
+      if(msgReaction.emoji.name === '❤️'){
+        Instagram.userLike(user, msgReaction.message.embeds[0].footer.text.split('ID=')[1], true, msgReaction.message, msgReaction.emoji.name);
+      }
+    }
   }
 });
 client.on('messageDelete', (msg) => {

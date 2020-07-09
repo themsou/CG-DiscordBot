@@ -15,6 +15,8 @@ var day = function day(){
     if(membersMatch.size >= 1){
 
       var member = membersMatch.first();
+      if(members[userTag].messages === undefined) continue;
+      if(members[userTag].messages.sended === undefined) continue;
       if(members[userTag].messages.sended.days === undefined) continue;
       // ---
 
