@@ -64,11 +64,11 @@ var updatePosts = function updatePosts(){
             react(msg, ['📺', '🤔', '😱', '👌', '🤬', '❤️'], 0);
           }
         });
-        /*await client.channels.get(GUILD1_NETFLIX_CHANNEL_ID).send({embed}).then(msg => {
+        await client.channels.get(GUILD1_NETFLIX_CHANNEL_ID).send({embed}).then(msg => {
           if(i == 0){
             react(msg, ['📺', '🤔', '😱', '👌', '🤬', '❤️'], 0);
           }
-        });*/
+        });
         i++;
       }
     }
