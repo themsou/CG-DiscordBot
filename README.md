@@ -1,11 +1,15 @@
-## CG-DiscordBOT
+## CG-DiscordBOT (Août 2019 - Novembre 2020)
 
-**Ce Bot discord est mon premier projet avec Node.js, le but est de faire un BOT pour un seul serveur Discord : CinéphileGang**
+Ce BOT Discord fût un BOT privé pour un serveur de cinéma que j'ai fondé avec deux amis.
+Après un 15 mois d'activité, nous avons décidé de fermer le serveur la communauté étant trop innactive, et la persévérance étant devenue trop faible. Nous n'avions plus l'énergie, l'envie et le temps de maintenir ce serveur en vie. Nous aurions tout de même passé de très bons moments sur ce serveur, nottament moi avec le développement de ce BOT.
+
+**Ce Bot discord est mon premier projet avec Node.js, le BOT est destiné à un seul serveur Discord : Cinéphile Gang**
 
 Ce bot a pour but d'offrir plusieurs fonctions dont :
 - Gestions de séries et de salons dédiés aux séries proposés et votés par la communauté
 - Gestion de compteurs (Membres, En ligne etc.)
 - Gestion d'un Grade @MembreActif
+- Envoi des publications de @netflixfr (Instagram) dans un salon spécial.
 
 ## L'organisation du code
 
